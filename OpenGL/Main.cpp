@@ -113,7 +113,7 @@ static float FindPoints(float size, unsigned int sides, unsigned int index, bool
     }
 }
 
-const float size = 0.02f; // size of the ball
+const float size = 0.025f; // size of the ball
 
 float positions[] = {
     -0.98f, -0.20f, // player 1
