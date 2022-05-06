@@ -302,7 +302,7 @@ int main(void)
     glUniform4f(location, 1.0f, 1.0f, 1.0f, 1.0f);
 
     // unbind everything
-    glUseProgram(0);
+    //glUseProgram(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -429,7 +429,7 @@ int main(void)
             }
         }
 
-        glUseProgram(shader);
+        //glUseProgram(shader);
         glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
 
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
