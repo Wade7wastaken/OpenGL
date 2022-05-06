@@ -200,6 +200,10 @@ static bool Player2Collision() {
     return false;
 }
 
+static void SetUniformColor(int location, unsigned char r, unsigned char g, unsigned char b) {
+    glUniform4f(location, (static_cast<GLfloat>(r) / 255), (static_cast<GLfloat>(g) / 255), (static_cast<GLfloat>(b) / 255), 1.0f);
+}
+
 int main(void)
 {
     GLFWwindow* window;
@@ -299,7 +303,8 @@ int main(void)
 
     int location = glGetUniformLocation(shader, "u_Color");
     ASSERT(location != -1); //location of -1 means it couldn't be found
-    glUniform4f(location, 1.0f, 1.0f, 1.0f, 1.0f);
+    SetUniformColor(location, 0, 0, 0); // init to black
+    //glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
 
     // unbind everything
     //glUseProgram(0);
@@ -430,7 +435,7 @@ int main(void)
         }
 
         //glUseProgram(shader);
-        glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
+        //glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
 
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, 20 * 2 * sizeof(float), positions, GL_DYNAMIC_DRAW);
@@ -439,18 +444,19 @@ int main(void)
 
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundibo);
+        SetUniformColor(location, 0, 29, 102);
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ballibo);
-        glUniform4f(location, 1.0f, 1.0f, 1.0f, 1.0f);
+        SetUniformColor(location, 255, 255, 255);
 
         GLCall(glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, nullptr));
 
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player1ibo);
-        glUniform4f(location, 0.0f, 0.3f, 0.8f, 1.0f);
+        SetUniformColor(location, 0, 140, 255);
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
