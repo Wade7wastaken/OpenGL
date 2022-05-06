@@ -116,10 +116,10 @@ static float FindPoints(float size, unsigned int sides, unsigned int index, bool
 const float size = 0.02f; // size of the ball
 
 float positions[] = {
-    -0.95f, -0.20f, // player 1
-    -0.90f, -0.20f,
-    -0.90f,  0.20f,
-    -0.95f,  0.20f,
+    -0.98f, -0.20f, // player 1
+    -0.96f, -0.20f,
+    -0.96f,  0.20f,
+    -0.98f,  0.20f,
      FindPoints(size, 8, 0, true), FindPoints(size, 8, 0, false), // 4 08, 09 ball
      FindPoints(size, 8, 1, true), FindPoints(size, 8, 1, false), // 5 10, 11
      FindPoints(size, 8, 2, true), FindPoints(size, 8, 2, false), // 6 12, 13
@@ -128,21 +128,21 @@ float positions[] = {
      FindPoints(size, 8, 5, true), FindPoints(size, 8, 5, false), // 9 18, 19
      FindPoints(size, 8, 6, true), FindPoints(size, 8, 6, false), // 10 20, 21
      FindPoints(size, 8, 7, true), FindPoints(size, 8, 7, false), // 11 22, 23
-     0.95f, -0.20f, // player 2
-     0.90f, -0.20f,
-     0.90f,  0.20f,
-     0.95f,  0.20f,
+     0.98f, -0.20f, // player 2
+     0.96f, -0.20f,
+     0.96f,  0.20f,
+     0.98f,  0.20f,
     -1.00f, -1.00f, // background
      1.00f, -1.00f,
      1.00f,  1.00f,
     -1.00f,  1.00f
 };
 
-float start[] = { // a backup to restore to when a game is lost or won
-    -0.95f, -0.20f, // player 1
-    -0.90f, -0.20f,
-    -0.90f,  0.20f,
-    -0.95f,  0.20f,
+float start[] = {
+    -0.98f, -0.20f, // player 1
+    -0.96f, -0.20f,
+    -0.96f,  0.20f,
+    -0.98f,  0.20f,
      FindPoints(size, 8, 0, true), FindPoints(size, 8, 0, false), // 4 08, 09 ball
      FindPoints(size, 8, 1, true), FindPoints(size, 8, 1, false), // 5 10, 11
      FindPoints(size, 8, 2, true), FindPoints(size, 8, 2, false), // 6 12, 13
@@ -151,10 +151,14 @@ float start[] = { // a backup to restore to when a game is lost or won
      FindPoints(size, 8, 5, true), FindPoints(size, 8, 5, false), // 9 18, 19
      FindPoints(size, 8, 6, true), FindPoints(size, 8, 6, false), // 10 20, 21
      FindPoints(size, 8, 7, true), FindPoints(size, 8, 7, false), // 11 22, 23
-     0.95f, -0.20f, // player 2
-     0.90f, -0.20f,
-     0.90f,  0.20f,
-     0.95f,  0.20f
+     0.98f, -0.20f, // player 2
+     0.96f, -0.20f,
+     0.96f,  0.20f,
+     0.98f,  0.20f,
+    -1.00f, -1.00f, // background
+     1.00f, -1.00f,
+     1.00f,  1.00f,
+    -1.00f,  1.00f
 };
 
 // handles key presses
