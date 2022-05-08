@@ -58,7 +58,7 @@ static ShaderProgramSource ParseShader(const std::string& vertex, const std::str
         }
     }
 
-    vertexout.resize(vertexout.size() - 1); //removes the last character from both strings because it was a weird character causing problems
+    vertexout.resize(vertexout.size() - 1); // removes the last character from both strings because it was a weird character causing problems
     fragmentout.resize(fragmentout.size() - 1);
 
     return { vertexout, fragmentout };
@@ -383,7 +383,7 @@ int main(void)
         }
         if (collision) {
             ballAngle = (float)(2 * pi) - ballAngle;
-            ballAngle += (rand() / (32767 / variance)) - (variance / 2);
+            //ballAngle += (rand() / (32767 / variance)) - (variance / 2);
         }
 
         collision = false;
@@ -397,7 +397,7 @@ int main(void)
         // check paddle
         if ((Player1Collision() && (ballAngle > (pi / 2)) && (ballAngle < (3 * pi / 2))) || (Player2Collision() && ((ballAngle < (pi / 2)) || (ballAngle > (3 * pi / 2))))) {
             ballAngle = (float) pi - ballAngle;
-            ballAngle += (rand() / (32767 / variance)) - (variance / 2);
+            //ballAngle += (rand() / (32767 / variance)) - (variance / 2);
             ballSpeed += speedInc;
         }
 
