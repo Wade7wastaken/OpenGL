@@ -38,12 +38,14 @@ struct ShaderProgramSource {
 };
 
 static ShaderProgramSource ParseShader(const std::string& vertex, const std::string& fragment) {
+    char current;
 
     std::ifstream vertexstream(vertex);
     std::string vertexout;
     if (vertexstream.is_open()) {
         while (vertexstream) {
-            vertexout += vertexstream.get();
+            current = vertexstream.get();
+            vertexout += current;
         }
     }
 
@@ -51,11 +53,12 @@ static ShaderProgramSource ParseShader(const std::string& vertex, const std::str
     std::string fragmentout;
     if (fragmentstream.is_open()) {
         while (fragmentstream) {
-            fragmentout += fragmentstream.get();
+            current = fragmentstream.get();
+            fragmentout += current;
         }
     }
 
-    vertexout.resize(vertexout.size() - 1); // removes the last character from both strings because it was a weird character causing problems
+    vertexout.resize(vertexout.size() - 1); //removes the last character from both strings because it was a weird character causing problems
     fragmentout.resize(fragmentout.size() - 1);
 
     return { vertexout, fragmentout };
@@ -72,7 +75,7 @@ static unsigned int CompileShader(unsigned int type, const std::string& source) 
     if (result == GL_FALSE) {
         int length;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)_malloca(length * sizeof(char));
+        char* message = (char*)alloca(length * sizeof(char));
         glGetShaderInfoLog(id, length, &length, message);
         std::cout << "Failed to compile " << 
             (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader" << std::endl;
@@ -103,20 +106,20 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 static float FindPoints(float size, unsigned int sides, unsigned int index, bool coord) {
     if (coord) {
-        return (float) (size * cos(2 * pi * index / sides));
+        return (size * cos(2 * pi * index / sides));
     }
     else {
-        return (float) (size * sin(2 * pi * index / sides) * 16 / 9);
+        return (size * sin(2 * pi * index / sides) * 16 / 9);
     }
 }
 
-const float size = 0.025f; // size of the ball
+const float size = 0.03f; // size of the ball
 
 float positions[] = {
-    -0.98f, -0.20f, // player 1
-    -0.96f, -0.20f,
-    -0.96f,  0.20f,
-    -0.98f,  0.20f,
+    -0.95f, -0.20f, // player 1
+    -0.90f, -0.20f,
+    -0.90f,  0.20f,
+    -0.95f,  0.20f,
      FindPoints(size, 8, 0, true), FindPoints(size, 8, 0, false), // 4 08, 09 ball
      FindPoints(size, 8, 1, true), FindPoints(size, 8, 1, false), // 5 10, 11
      FindPoints(size, 8, 2, true), FindPoints(size, 8, 2, false), // 6 12, 13
@@ -125,21 +128,17 @@ float positions[] = {
      FindPoints(size, 8, 5, true), FindPoints(size, 8, 5, false), // 9 18, 19
      FindPoints(size, 8, 6, true), FindPoints(size, 8, 6, false), // 10 20, 21
      FindPoints(size, 8, 7, true), FindPoints(size, 8, 7, false), // 11 22, 23
-     0.98f, -0.20f, // player 2
-     0.96f, -0.20f,
-     0.96f,  0.20f,
-     0.98f,  0.20f,
-    -1.00f, -1.00f, // background
-     1.00f, -1.00f,
-     1.00f,  1.00f,
-    -1.00f,  1.00f
+     0.95f, -0.20f, // player 2
+     0.90f, -0.20f,
+     0.90f,  0.20f,
+     0.95f,  0.20f
 };
 
-float start[] = {
-    -0.98f, -0.20f, // player 1
-    -0.96f, -0.20f,
-    -0.96f,  0.20f,
-    -0.98f,  0.20f,
+float start[] = { // a backup to restore to when a game is lost or won
+    -0.95f, -0.20f, // player 1
+    -0.90f, -0.20f,
+    -0.90f,  0.20f,
+    -0.95f,  0.20f,
      FindPoints(size, 8, 0, true), FindPoints(size, 8, 0, false), // 4 08, 09 ball
      FindPoints(size, 8, 1, true), FindPoints(size, 8, 1, false), // 5 10, 11
      FindPoints(size, 8, 2, true), FindPoints(size, 8, 2, false), // 6 12, 13
@@ -148,14 +147,10 @@ float start[] = {
      FindPoints(size, 8, 5, true), FindPoints(size, 8, 5, false), // 9 18, 19
      FindPoints(size, 8, 6, true), FindPoints(size, 8, 6, false), // 10 20, 21
      FindPoints(size, 8, 7, true), FindPoints(size, 8, 7, false), // 11 22, 23
-     0.98f, -0.20f, // player 2
-     0.96f, -0.20f,
-     0.96f,  0.20f,
-     0.98f,  0.20f,
-    -1.00f, -1.00f, // background
-     1.00f, -1.00f,
-     1.00f,  1.00f,
-    -1.00f,  1.00f
+     0.95f, -0.20f, // player 2
+     0.90f, -0.20f,
+     0.90f,  0.20f,
+     0.95f,  0.20f
 };
 
 // handles key presses
@@ -197,10 +192,6 @@ static bool Player2Collision() {
     return false;
 }
 
-static void SetUniformColor(int location, unsigned char r, unsigned char g, unsigned char b) {
-    glUniform4f(location, (static_cast<GLfloat>(r) / 255), (static_cast<GLfloat>(g) / 255), (static_cast<GLfloat>(b) / 255), 1.0f);
-}
-
 int main(void)
 {
     GLFWwindow* window;
@@ -229,21 +220,17 @@ int main(void)
 
     rand(); // wasing the first rand call
 
-    const float speedInc = 0.0001f;
-    float variance = 0.15f; // ammount of angle variance during a bounce
-    float ballAngle = (float)((pi * ((2 * rand()) + 98301)) / 131068);
-
-    if ((ballAngle < (3 * pi / 4)) || (ballAngle > (5 * pi / 4)))
-        ballAngle = 3.0f;
-
+    const float speedInc = 0.001f;
+    const float variance = 0.2; // ammount of angle variance during a bounce
+    float ballAngle = (((rand() + 16383.5) * pi) / 32767);
     float ballSpeed = 0.005f;
     bool collision = false;
 
     unsigned int timer = 0;
 
-    unsigned int background[] = {
-        16, 17, 18,
-        18, 19, 16
+    unsigned int player1[] = { // must be unsigned
+        0, 1, 2,
+        2, 3, 0
     };
 
     unsigned int ball[] = {
@@ -255,11 +242,6 @@ int main(void)
         4, 11, 10
     };
 
-    unsigned int player1[] = { // must be unsigned
-        0, 1, 2,
-        2, 3, 0
-    };
-
     unsigned int player2[] = {
         12, 13, 14,
         14, 15, 12
@@ -268,15 +250,10 @@ int main(void)
     unsigned int buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 20 * 2 * sizeof(float), positions, GL_DYNAMIC_DRAW); // change to dynamic when moving
+    glBufferData(GL_ARRAY_BUFFER, 16 * 2 * sizeof(float), positions, GL_DYNAMIC_DRAW); // change to dynamic when moving
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-
-    unsigned int backgroundibo;
-    glGenBuffers(1, &backgroundibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * sizeof(unsigned int), background, GL_STATIC_DRAW); // change to dynamic when moving
 
     unsigned int ballibo;
     glGenBuffers(1, &ballibo);
@@ -300,11 +277,10 @@ int main(void)
 
     int location = glGetUniformLocation(shader, "u_Color");
     ASSERT(location != -1); //location of -1 means it couldn't be found
-    SetUniformColor(location, 0, 0, 0); // init to black
-    //glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
+    glUniform4f(location, 1.0f, 1.0f, 1.0f, 1.0f);
 
     // unbind everything
-    //glUseProgram(0);
+    glUseProgram(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -379,30 +355,30 @@ int main(void)
             }
         }
         if (collision) {
-            ballAngle = (float)(2 * pi) - ballAngle;
-            //ballAngle += (rand() / (32767 / variance)) - (variance / 2);
+            ballAngle = (2 * pi) - ballAngle;
+            ballAngle += (rand() / (32767 / variance)) - (variance / 2);
         }
 
         collision = false;
 
         //clamp angle
         if (ballAngle > 2 * pi)
-            ballAngle -= (float)(2 * pi);
+            ballAngle -= (2 * pi);
         if (ballAngle < 0)
-            ballAngle += (float)(2 * pi);
+            ballAngle += (2 * pi);
 
         // check paddle
-        if ((Player1Collision() && (ballAngle > (pi / 2)) && (ballAngle < (3 * pi / 2))) || (Player2Collision() && ((ballAngle < (pi / 2)) || (ballAngle > (3 * pi / 2))))) {
-            ballAngle = (float) pi - ballAngle;
-            //ballAngle += (rand() / (32767 / variance)) - (variance / 2);
+        if ((Player1Collision() && (ballAngle > (pi / 2) && ballAngle) < (3 * pi / 2)) || (Player2Collision() && (ballAngle < (pi / 2) || ballAngle >(3 * pi / 2)))) {
+            ballAngle = pi - ballAngle;
+            ballAngle += (rand() / (32767 / variance)) - (variance / 2);
             ballSpeed += speedInc;
         }
 
         // clamp angle
         if (ballAngle > 2 * pi)
-            ballAngle -= (float)(2 * pi);
+            ballAngle -= (2 * pi);
         if (ballAngle < 0)
-            ballAngle += (float)(2 * pi);
+            ballAngle += (2 * pi);
 
         //check oob
         collision = false;
@@ -417,7 +393,7 @@ int main(void)
             for (int i = 0; i < 32; i++) {
                 positions[i] = start[i];
             }
-            ballAngle = (float) (((rand() + 16383.5) * pi) / 32767);
+            ballAngle = (((rand() + 16383.5) * pi) / 32767);
             ballSpeed = 0.005f;
         }
 
@@ -431,32 +407,22 @@ int main(void)
             }
         }
 
-        //glUseProgram(shader);
-        //glUniform4f(location, (static_cast<GLfloat>(0) / 255), (static_cast<GLfloat>(29) / 255), (static_cast<GLfloat>(102) / 255), 1.0f); // 0, 29, 102 or #001d66
+        glUseProgram(shader);
+        glUniform4f(location, 1.0f, 1.0f, 1.0f, 1.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        glBufferData(GL_ARRAY_BUFFER, 20 * 2 * sizeof(float), positions, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 16 * 2 * sizeof(float), positions, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundibo);
-        SetUniformColor(location, 0, 29, 102);
-
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ballibo);
-        SetUniformColor(location, 255, 255, 255);
 
         GLCall(glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, nullptr));
 
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player1ibo);
-        SetUniformColor(location, 0, 140, 255);
+        glUniform4f(location, 0.0f, 0.3f, 0.8f, 1.0f);
 
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, player2ibo);
 
@@ -476,3 +442,26 @@ int main(void)
     glfwTerminate();
     return 0;
 }
+
+/*std::ifstream stream(filepath);
+
+    enum class ShaderType {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+
+    //std::string line;
+    std::stringstream ss[2];
+    ShaderType type = ShaderType::NONE;
+    while (getline(stream, line)) {
+        if (line.find("#shader") != std::string::npos) {
+            if (line.find("vertex") != std::string::npos) {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos) {
+                type = ShaderType::FRAGMENT;
+            }
+        }
+        else {
+            ss[(int)type] << line << '\n';
+        }
+    }*/
